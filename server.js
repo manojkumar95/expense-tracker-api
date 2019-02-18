@@ -1,8 +1,8 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
 //CORS middleware
-var allowCrossDomain = function(req, res, next) {
+const allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -27,10 +27,10 @@ mongoose.connect(dbConfig.url,)
 require('./app/routes/index.js')(app);
 
 // Create a Server
-var server = app.listen(8081, function () {
+const server = app.listen(8081, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+  const host = server.address().address
+  const port = server.address().port
 
   console.log("App listening at http://%s:%s", host, port)
 })
