@@ -26,6 +26,7 @@ mongoose.connect(dbConfig.url,)
 
 require('./app/routes/index.js')(app);
 require('./app/routes/user.routes.js')(app);
+require('./app/routes/category.routes.js')(app);
 
 // Create a Server
 const server = app.listen(8081, function () {

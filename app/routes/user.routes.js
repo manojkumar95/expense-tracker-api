@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = app => {
     const users = require('../controllers/user.controller.js');
     
     // Find the first user
