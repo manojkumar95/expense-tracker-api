@@ -5,7 +5,7 @@ const ExpenseSchema = Schema({
     amount: { type: String, required: true},
     notes: String,
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    categories : [{ type: Object }],
+    categories : [{ type: Schema.Types.ObjectId, ref: 'Category', required: true }],
     createdAt: { type: Date, required: true, default: Date.now }
 });
 
