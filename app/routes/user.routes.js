@@ -6,4 +6,7 @@ module.exports = app => {
 			
 	// Insert a user in the User collection
     app.post('/api/user/update', users.updateUser);
+
+    // create a user in the User collection
+    app.post('/api/user/create', users.createUser);
 }
