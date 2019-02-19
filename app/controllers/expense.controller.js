@@ -4,7 +4,7 @@ const Moment = require('moment');
 const mongoose = require('mongoose');
 
 const findAllExpenses = (req, res) => {
-    Expense.find({ user: '5c69217d290ddd43fa4e65e6' })
+    Expense.find({ user: req.body.user })
         .populate('categories')
         .exec((err, expenses) => {
             if (err) {
@@ -12,7 +12,23 @@ const findAllExpenses = (req, res) => {
                     message: err.message
                 });
             };
-            res.send(expenses);
+            let expensesList = [];
+            expenses.forEach(expense => {
+                const { _id, title, amount, notes, user, createdAt, categories } = expense;
+                expensesList.push({
+                    id: _id,
+                    title,
+                    amount,
+                    createdAt,
+                    categories,
+                    notes,
+                    user
+                });
+            })
+            res.send({
+                status: 'Success',
+                expenses: expensesList
+            });
         });
 }
 
@@ -41,7 +57,7 @@ const createExpense = (req, res) => {
 };
 
 const findExpenseByPeriodRange = (req, res) => {
-    let { fromDate, period } = req.body;
+    let { fromDate = new Date(), period } = req.body;
     let endDate = '';
     fromDate = Moment(fromDate).toDate();
     if (period === 'month') {
@@ -51,7 +67,6 @@ const findExpenseByPeriodRange = (req, res) => {
     } else if (period === 'day') {
         endDate = Moment(fromDate).add(1, 'days').toDate();
     }
-    let categories = [];
     Category.find()
         .then(categoriesList => {
             findExpenseSum(categoriesList, fromDate, endDate, (value, err) => {
