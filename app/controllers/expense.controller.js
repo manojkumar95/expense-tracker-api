@@ -8,7 +8,7 @@ const findAllExpenses = (req, res) => {
         .populate('categories')
         .exec((err, expenses) => {
             if (err) {
-                res.status(412).send({
+                res.status(404).send({
                     message: err.message
                 });
             };
@@ -50,14 +50,31 @@ const createExpense = (req, res) => {
             });
             res.send(expense);
         }).catch(err => {
-            res.status(412).send({
-                message: err.message
-            });
+            if (err.errors && err.errors) {
+                const { title, amount, categories, user } = err.errors;
+                let errorMsg = '';
+                if (title) {
+                    errorMsg = title.message;
+                } else if (amount) {
+                    errorMsg = amount.message;
+                } else if (categories) {
+                    errorMsg = categories.message;
+                } else if (err.errors.user) {
+                    errorMsg = user.message;
+                }
+                res.status(412).send({
+                    message: errorMsg
+                });
+            } else {
+                res.status(412).send({
+                    message: err.message
+                });
+            }
         });
 };
 
 const findExpenseByPeriodRange = (req, res) => {
-    let { fromDate = new Date(), period } = req.body;
+    let { fromDate = new Date(), period, user } = req.body;
     if (!fromDate) fromDate = new Date();
     let endDate = '';
     fromDate = Moment(fromDate).valueOf();
@@ -70,9 +87,11 @@ const findExpenseByPeriodRange = (req, res) => {
     }
     Category.find()
         .then(categoriesList => {
-            ExpenseService.findExpenseSumOnCategory(categoriesList, fromDate, endDate, (value, err) => {
+            ExpenseService.findExpenseSumOnCategory(categoriesList, fromDate, endDate, user, (value, err) => {
                 if (err) {
-                    res.send(err);
+                    res.status(404).send({
+                        message: err.message
+                    });
                 }
                 res.send(value);
             });
