@@ -1,7 +1,7 @@
 const Expense = require('../models/expense.js');
 const Category = require('../models/category.js');
+const ExpenseService = require('../service/expense.service.js');
 const Moment = require('moment');
-const mongoose = require('mongoose');
 
 const findAllExpenses = (req, res) => {
     Expense.find({ user: req.body.user })
@@ -58,18 +58,19 @@ const createExpense = (req, res) => {
 
 const findExpenseByPeriodRange = (req, res) => {
     let { fromDate = new Date(), period } = req.body;
+    if (!fromDate) fromDate = new Date();
     let endDate = '';
-    fromDate = Moment(fromDate).toDate();
+    fromDate = Moment(fromDate).valueOf();
     if (period === 'month') {
-        endDate = Moment(fromDate).add(30, 'days').toDate();
+        endDate = Moment(fromDate).add(30, 'days').valueOf();
     } else if (period === 'week') {
-        endDate = Moment(fromDate).add(7, 'days').toDate();
+        endDate = Moment(fromDate).add(7, 'days').valueOf();
     } else if (period === 'day') {
-        endDate = Moment(fromDate).add(1, 'days').toDate();
+        endDate = Moment(fromDate).add(1, 'days').valueOf();
     }
     Category.find()
         .then(categoriesList => {
-            findExpenseSum(categoriesList, fromDate, endDate, (value, err) => {
+            ExpenseService.findExpenseSumOnCategory(categoriesList, fromDate, endDate, (value, err) => {
                 if (err) {
                     res.send(err);
                 }
@@ -79,27 +80,6 @@ const findExpenseByPeriodRange = (req, res) => {
             categories = [];
         });
 };
-const findExpenseSum = async (categoriesList, fromDate, endDate, callback) => {
-    let amountMap = { ...categoriesList };
-    await Promise.all(categoriesList.map(async (category, index) => {
-        amountMap[index] = { ...amountMap[index], amount: 0 };
-        await new Promise(async (resolve, reject) => {
-            await Expense.find({
-                'categories': mongoose.Types.ObjectId(category._id),
-                'createdAt': { $gte: fromDate, $lte: endDate }
-            })
-                .then(async (expenses, err) => {
-                    await Promise.all(expenses.map(async expense => {
-                        amountMap[index].amount = amountMap[index].amount + parseInt(expense.amount, 10);
-                        resolve();
-                    }))
-                })
-            resolve();
-        })
-    })
-    )
-    return callback(amountMap, null);
-}
 
 module.exports = {
     createExpense,
