@@ -14,11 +14,13 @@ app.use(allowCrossDomain);
 // Configuring the database
 const dbConfig = require('./app/config/mongodb.config.js');
 const mongoose = require('mongoose');
+const loadDataConfig = require('./app/migration/load.data.js');
 
 // Connecting to the database
 mongoose.connect(dbConfig.url,)
   .then(() => {
     console.log("Successfully connected to MongoDB.");
+    loadDataConfig.loadInitialData();
   }).catch(err => {
     console.log('Could not connect to MongoDB.');
     process.exit();

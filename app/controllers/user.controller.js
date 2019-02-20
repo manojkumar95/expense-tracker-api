@@ -14,19 +14,6 @@ const updateUser = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
-  User.create(
-    req.body
-  )
-    .then(user => {
-      res.send(user);
-    }).catch(err => {
-      res.status(412).send({
-        message: err.message
-      });
-    });
-};
-
 const findFirstUser = (req, res) => {
   User.findOne()
     .then(user => {
@@ -46,6 +33,5 @@ const findFirstUser = (req, res) => {
 
 module.exports = {
   findFirstUser,
-  createUser,
   updateUser
 };
