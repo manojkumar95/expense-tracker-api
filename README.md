@@ -1,5 +1,5 @@
 # expense-web-api
-An backend app to demonstrate a web application with Node js frameworks such as expres & mongoose
+An backend app to demonstrate a web application with Node js frameworks such as express & mongoose
 
 ## Usage
 
