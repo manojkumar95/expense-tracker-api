@@ -4,7 +4,7 @@ const { ApiConstants } = require('../constants/statusCodes');
 const updateUser = (req, res) => {
   const { user, firstName, lastName, phoneNumber } = req.body;
   User.update(
-    { _id: user, firstName, lastName, phoneNumber }, { runValidators: true }
+    { _id: user, firstName, lastName, phoneNumber }
   )
     .then(user => {
       res.send(user);
