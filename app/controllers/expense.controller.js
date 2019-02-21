@@ -1,6 +1,7 @@
 const Expense = require('../models/expense.js');
 const Category = require('../models/category.js');
 const ExpenseService = require('../service/expense.service.js');
+const { ApiConstants } = require('../constants/statusCodes');
 const Moment = require('moment');
 
 const findAllExpenses = (req, res) => {
@@ -8,8 +9,9 @@ const findAllExpenses = (req, res) => {
         .populate('categories')
         .exec((err, expenses) => {
             if (err) {
-                res.status(404).send({
-                    message: err.message
+                res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
+                    status: ApiConstants.DATA_NOT_FOUND.status,
+                    error: err.message
                 });
             };
             let expensesList = [];
@@ -62,12 +64,14 @@ const createExpense = (req, res) => {
                 } else if (err.errors.user) {
                     errorMsg = user.message;
                 }
-                res.status(412).send({
-                    message: errorMsg
+                res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+                    status: ApiConstants.PRE_CONDITION_FAILED.status,
+                    error: errorMsg
                 });
             } else {
-                res.status(412).send({
-                    message: err.message
+                res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+                    status: ApiConstants.PRE_CONDITION_FAILED.status,
+                    error: err.message
                 });
             }
         });
@@ -89,8 +93,9 @@ const findExpenseByPeriodRange = (req, res) => {
         .then(categoriesList => {
             ExpenseService.findExpenseSumOnCategory(categoriesList, fromDate, endDate, user, (value, err) => {
                 if (err) {
-                    res.status(404).send({
-                        message: err.message
+                    res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
+                        status: ApiConstants.DATA_NOT_FOUND.status,
+                        error: err.message
                     });
                 }
                 res.send(value);

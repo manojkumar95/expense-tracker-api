@@ -1,4 +1,5 @@
 const User = require('../models/user.js');
+const { ApiConstants } = require('../constants/statusCodes');
 
 const updateUser = (req, res) => {
   const { user, firstName, lastName, phoneNumber } = req.body;
@@ -9,12 +10,14 @@ const updateUser = (req, res) => {
       res.send(user);
     }).catch(err => {
       if (err.CastError) {
-        res.status(412).send({
-          message: "User Id does not exist"
+        res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+          status: ApiConstants.PRE_CONDITION_FAILED.status,
+          error: "User Id does not exist"
         });
       } else {
-        res.status(412).send({
-          message: err.message
+        res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+          status: ApiConstants.PRE_CONDITION_FAILED.status,
+          error: err.message
         });
       }
     });
@@ -31,8 +34,9 @@ const findFirstUser = (req, res) => {
         phoneNumber
       });
     }).catch(err => {
-      res.status(404).send({
-        message: err.message
+      res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
+        status: ApiConstants.DATA_NOT_FOUND.status,
+        error: err.message
       });
     });
 };

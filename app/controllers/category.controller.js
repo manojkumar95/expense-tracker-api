@@ -1,4 +1,5 @@
 const Category = require('../models/category.js');
+const { ApiConstants } = require('../constants/statusCodes');
 
 const findAllCategories = (req, res) => {
     Category.find()
@@ -17,8 +18,9 @@ const findAllCategories = (req, res) => {
                 categories: categoryList
             });
         }).catch(err => {
-            res.status(404).send({
-                message: err.message
+            res.status(ApiConstants.DATA_NOT_FOUND.statusCode).send({
+                status: ApiConstants.DATA_NOT_FOUND.status,
+                error: err.message
             });
         });
 };
@@ -37,12 +39,14 @@ const createCategory = (req, res) => {
             });
         }).catch(err => {
             if (err.errors && err.errors.name) {
-                res.status(412).send({
-                    message: err.errors.name.message
+                res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+                    status: ApiConstants.PRE_CONDITION_FAILED.status,
+                    error: err.errors.name.message
                 });
             } else {
-                res.status(412).send({
-                    message: err.message
+                res.status(ApiConstants.PRE_CONDITION_FAILED.statusCode).send({
+                    status: ApiConstants.PRE_CONDITION_FAILED.status,
+                    error: err.message
                 });
             }
         });
