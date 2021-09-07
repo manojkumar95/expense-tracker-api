@@ -16,11 +16,8 @@ The frontend repo link for these APIs is: https://github.com/manojkumar95/expens
 
 ```$ git clone https://github.com/manojkumar95/expense-tracker-api.git
 
+$ cd expense-tracker-api
 
-```$ cd expense-tracker-api
+$ yarn install
 
-
-```$ yarn install
-
-
-```$ yarn start
+$ yarn start
